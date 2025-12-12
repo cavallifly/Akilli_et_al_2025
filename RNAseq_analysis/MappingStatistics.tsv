@@ -1,0 +1,8 @@
+#Sample                                 	Total_fragments	Mapped         	Perc_mapped    	Uniquely_mapped	Unmapped       	Properly_paired	Not_properly_paired
+rnaseq_RNA_WD_NOnub_Rep1_all_dm6_NA     	24,040,899     23,483,002     	97.7           	23,483,002     	557,897        	20,330,822     	3,152,180      
+rnaseq_RNA_WD_NOnub_Rep2_all_dm6_NA     	24,025,339     23,511,263     	97.9           	23,511,263     	514,076        	20,249,420     	3,261,843      
+rnaseq_RNA_WD_NOnub_Rep3_all_dm6_NA     	24,075,224     23,581,492     	97.9           	23,581,492     	493,732        	20,419,745     	3,161,747      
+rnaseq_RNA_WD_SUMOnub_Rep1_all_dm6_NA   	24,033,088     23,119,391     	96.2           	23,119,391     	913,697        	20,042,022     	3,077,369      
+rnaseq_RNA_WD_SUMOnub_Rep2_all_dm6_NA   	24,046,162     22,699,171     	94.4           	22,699,171     	1,346,991      	19,749,400     	2,949,771      
+rnaseq_RNA_WD_SUMOnub_Rep3_all_dm6_NA   	24,056,067     22,620,261     	94.0           	22,620,261     	1,435,806      	19,370,624     	3,249,637      
+
