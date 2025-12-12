@@ -8,7 +8,7 @@ Install the following R packages: ggplot2 and DiffBind.
 The programs pyGenomeTracks, samtools, sambamba, deeptools, and bowtie2.
 
 # Input data for ChromHMM analysis #
-The list of peaks used for the ChromHMM analysis are provided in the peakFiles folder.
+The list of .bam files used for the ChromHMM analysis are provided in the bamFiles folder.
 
 <!--
 # Input data #

@@ -6,12 +6,12 @@ chromSizes="/home/Programs/chrom_sizes_dm6_higlass.txt"
 bamDir=bamFiles
 bamFlag=0  # 1 is FALSE 0 is TRUE
 
-peakDir=/zdata/data/mdistefano/2022_06_08_Project_on_PREs_contacts/ChromHMM_analysis/peakFiles
+peakDir=peakFiles
 peakFlag=1 # 1 is FALSE 0 is TRUE
 
 for condition in ${conditions} ;
 do
-    for binning in 5000 1000 2000 4000 8000 10000 20000 ; #200 ; # in bp
+    for binning in 200 ; # in bp
     do
 	outDir=analysis_${condition}_noH3K9me3_at_${binning}bp
 	if [[ -d ${outDir} ]];
@@ -83,9 +83,7 @@ do
 	fi
 
 	# Best guess is 4: active (K27ac); Polycomb (K27me3 and Pc); Repressive (K9me3); Null (None)
-	#for nstates in 4 ;
-	# Best guess is 4: active (K27ac); Polycomb (K27me3 and Pc); Null (None)
-	for nstates in 3 ;		       
+	for nstates in 4 ;		       
 	do
 	    
 	    modelDir=model_at_${binning}bp_with_${nstates}_states
