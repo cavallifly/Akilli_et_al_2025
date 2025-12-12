@@ -1,0 +1,10 @@
+renamed 'C_IgG_8_EKDL230006288-1A_H3HM7DSX7_L4.bam' -> 'cnr_IgG_WD_D907C_merge_all_dm6_GS.sorted_dedup.bam'
+renamed 'C_K9_merged_dedup.bam' -> 'cnr_H3K9me3_WD_D907C_merge_all_dm6_GS.sorted_dedup.bam'
+
+All files here are sorted_dedup and merged between replicates!
+They are taken from:
+../../CNR/pipeline_analysis/cnr_H3K27ac_WD_NOnub_merge_all_dm6_NA
+../../CNR/pipeline_analysis/cnr_H3K27me3_WD_NOnub_merge_all_dm6_NA
+../../CNR/pipeline_analysis/cnr_H3K9me3_WD_NOnub_merge_all_dm6_NA
+../../CNR/pipeline_analysis/cnr_PcXlinked_WD_NOnub_merge_all_dm6_NALF2
+../../CNR/pipeline_analysis/cnr_IgG_WD_NOnub_merge_all_dm6_NALF2

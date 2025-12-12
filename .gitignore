@@ -1,0 +1,6 @@
+*~
+*.zip
+*.bam
+*.bw
+*.bigWig
+synchronize_data.sh
