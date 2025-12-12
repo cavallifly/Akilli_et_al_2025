@@ -1,0 +1,18 @@
+building example db...
+
+gzip: stdin: not in gzip format
+tar: Child returned status 1
+tar: Error is not recoverable: exiting now
+  chrom1 start1   end1 chrom2 start2   end2 name   value
+1  chr2L   5001  20000  chr2L   5001  20000 TAD1    PcG0
+2  chr2L  20000  66000  chr2L  20000  66000 TAD2   Null0
+3  chr2L  74000 108000  chr2L  74000 108000 TAD3 Active0
+4  chr2L 108000 142000  chr2L 108000 142000 TAD4 Active1
+5  chr2L 207000 249000  chr2L 207000 249000 TAD5 Active2
+6  chr2L 249000 300000  chr2L 249000 300000 TAD6 Active3
+  chrom1   start1     end1 chrom2   start2     end2   name         value
+1  chr2L 16350000 16600000  chr2L 16350000 16600000 dacTAD ActivePcGNull
+Error: unexpected '=' in:
+"                    print(head(chipData))
+                    for(i="
+Execution halted
