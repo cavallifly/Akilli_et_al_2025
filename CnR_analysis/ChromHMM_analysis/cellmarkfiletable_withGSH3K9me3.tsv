@@ -1,0 +1,4 @@
+NOnub	H3K27ac		cnr_H3K27ac_WD_NOnub_merge_all_dm6_NA.bam	cnr_IgG_WD_NOnub_merge_all_dm6_NA.bam
+NOnub	H3K27me3	cnr_H3K27me3_WD_NOnub_merge_all_dm6_NA.bam	cnr_IgG_WD_NOnub_merge_all_dm6_NA.bam
+NOnub	Pc		cnr_Pc_WD_NOnub_merge_all_dm6_NA.bam	cnr_IgG_WD_NOnub_merge_all_dm6_NA.bam
+NOnub	H3K9me3		cnr_H3K9me3_WD_D907C_merge_all_dm6_GS.bam	cnr_IgG_WD_D907C_merge_all_dm6_GS.bam

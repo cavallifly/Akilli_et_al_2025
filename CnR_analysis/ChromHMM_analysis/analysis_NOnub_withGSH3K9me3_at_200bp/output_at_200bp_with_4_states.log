@@ -1,0 +1,36 @@
+Writing to file model_at_200bp_with_4_states/transitions_4.txt
+Writing to file model_at_200bp_with_4_states/emissions_4.txt
+Writing to file model_at_200bp_with_4_states/emissions_4.svg
+Writing to file model_at_200bp_with_4_states/emissions_4.png
+Writing to file model_at_200bp_with_4_states/transitions_4.png
+Writing to file model_at_200bp_with_4_states/transitions_4.svg
+Writing to file model_at_200bp_with_4_states/model_4.txt
+ Iteration  Estimated Log Likelihood     Change    Total Time (secs)
+         1               -498718.689          -                  2.2
+         2               -471886.399  26832.290                  2.8
+         3               -463664.524   8221.874                  3.4
+         4               -461636.050   2028.474                  3.9
+         5               -461239.375    396.675                  4.2
+         6               -461161.203     78.172                  4.4
+         7               -461145.320     15.883                  4.5
+         8               -461141.973      3.347                  4.6
+         9               -461141.232      0.741                  4.7
+        10               -461141.056      0.176                  4.9
+        11               -461141.010      0.046                  5.0
+        12               -461140.997      0.013                  5.1
+        13               -461140.993      0.004                  5.2
+        14               -461140.991      0.001                  5.4
+        15               -461140.991      0.000                  5.5
+Writing to file model_at_200bp_with_4_states/NOnub_4_segments.bed
+Writing to file model_at_200bp_with_4_states/NOnub_4_dense.bed
+Writing to file model_at_200bp_with_4_states/NOnub_4_expanded.bed
+Writing to file model_at_200bp_with_4_states/NOnub_4_overlap.txt
+Writing to file model_at_200bp_with_4_states/NOnub_4_overlap.png
+Writing to file model_at_200bp_with_4_states/NOnub_4_overlap.svg
+Writing to file model_at_200bp_with_4_states/NOnub_4_RefSeqTES_neighborhood.txt
+Writing to file model_at_200bp_with_4_states/NOnub_4_RefSeqTES_neighborhood.png
+Writing to file model_at_200bp_with_4_states/NOnub_4_RefSeqTES_neighborhood.svg
+Writing to file model_at_200bp_with_4_states/NOnub_4_RefSeqTSS_neighborhood.txt
+Writing to file model_at_200bp_with_4_states/NOnub_4_RefSeqTSS_neighborhood.png
+Writing to file model_at_200bp_with_4_states/NOnub_4_RefSeqTSS_neighborhood.svg
+Warning could not automatically open in a browser model_at_200bp_with_4_states/webpage_4.html
