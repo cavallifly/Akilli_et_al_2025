@@ -1,0 +1,6 @@
+".y."	"group1"	"group2"	"n1"	"n2"	"statistic"	"p"	"p.adj"	"p.adj.signif"	"p.adj.formatted"
+"values"	"Control_merge_All"	"SUMORNAi_merge_All"	624	624	2.70824426872552	0.00676402181770353	0.00845502727212941	"**"	"0.00846"
+"values"	"Control_merge_PcG"	"SUMORNAi_merge_PcG"	624	624	3.19635047882418	0.00139177940611314	0.0023196323435219	"**"	"0.00232"
+"values"	"Control_merge_Active"	"SUMORNAi_merge_Active"	624	624	-2.2823543748464	0.0224684266998935	0.0224684266998935	"*"	"0.0225"
+"values"	"Control_merge_Het"	"SUMORNAi_merge_Het"	624	624	4.15839747180295	3.20488020784883e-05	8.01220051962207e-05	"****"	"8.01e-05"
+"values"	"Control_merge_Null"	"SUMORNAi_merge_Null"	624	624	8.62284830871919	6.53089437040138e-18	3.26544718520069e-17	"****"	"3.27e-17"

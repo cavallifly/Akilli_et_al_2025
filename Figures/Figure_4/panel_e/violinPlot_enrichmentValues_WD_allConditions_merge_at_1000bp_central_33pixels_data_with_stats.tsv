@@ -1,0 +1,6 @@
+".y."	"group1"	"group2"	"n1"	"n2"	"statistic"	"p"	"p.adj"	"p.adj.signif"	"p.adj.formatted"
+"values"	"Control_All"	"SUMORNAi_All"	496	496	-1.75329109975046	0.0795520524612219	0.198880131153055	"ns"	"0.199"
+"values"	"Control_PcG"	"SUMORNAi_PcG"	496	496	0.706296322304504	0.480003880039001	0.600004850048751	"ns"	"0.6"
+"values"	"Control_Active"	"SUMORNAi_Active"	496	496	-4.37649847818419	1.2060103306634e-05	6.030051653317e-05	"****"	"6.03e-05"
+"values"	"Control_Het"	"SUMORNAi_Het"	496	496	0.335166484260427	0.737499502949428	0.737499502949428	"ns"	"0.737"
+"values"	"Control_Null"	"SUMORNAi_Null"	496	496	1.53819831611599	0.124000132596468	0.20666688766078	"ns"	"0.207"
