@@ -1,0 +1,8 @@
+name	chrom1	start1	end1	chrom2	start2	end2
+PcG_zfh1_region chr3R   30790000        30830000        chr3R   30900000        30950000
+PcG_zfh1_region	chr3R	30790000	30830000	chr3R	31060000	31090000
+PcG_zfh1_region	chr3R	30690000	30790000	chr3R	30900000	30950000
+PcG_zfh1_region	chr3R	30690000	30790000	chr3R	31060000	31090000
+PcG_zfh1_region	chr3R	30900000	30950000	chr3R	31060000	31090000
+
+
