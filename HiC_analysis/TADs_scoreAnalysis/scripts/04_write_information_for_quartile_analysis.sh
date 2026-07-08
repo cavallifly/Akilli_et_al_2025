@@ -1,10 +1,11 @@
 #List of TADs
 #chr2L 5001 20000 PcG1
-TADs=scripts/TopDom_domains_hic_WD_NOnub_merge_dm6_NA_window_5_at_5000bp_filtered_refined_at_1000bp_with_state.bed
+TADs=scripts_clean/TopDom_domains_hic_WD_NOnub_merge_dm6_NA_window_5_at_5000bp_filtered_refined_at_1000bp_with_state.bed
 
 #interval1 chrom start end sum sum2 cnt avg stddev
 #PcG1 chr2L 5001 20000 1.35996 1.84949 1 1.35996 0
 log2RatioPerTAD=avgLog2ratio_per_TAD_basedOnGeneTSS_closestTAD_within5000bp.tsv
+
 
 #interval1	interval2	distance	av_score_NOnub	av_score_SUMOnub	quartile
 #PcG1	PcG2	502499.5	-32.3514	-19.1503	PcG_PcG_Q1
@@ -70,41 +71,16 @@ do
 	    
 	    # Average Log2Ratio
 	    outFileAvgLog2ratio=avgLog2ratio_trans1Dinterval_all_domains_vs_all_domains_${statePair}_data.tab
-	    cat _tmpStatePairQuartile | awk -v q=${quartile} '{printf("%s\t%s\n",q,($5+$10)*0.5)}' >> ${outFileAvgLog2ratio}	    
+	    cat _tmpStatePairQuartile | awk -v q=${quartile} '{if($5!="NA" && $10!="NA"){printf("%s\t%s\n",q,($5+$10)*0.5)}}' >> ${outFileAvgLog2ratio}	    
 	    for state in ${state1} ${state2} ;
 	    do
 		outFileAvgLog2ratioPerState=avgLog2ratio_trans1Dinterval_all_domains_vs_all_domains_${statePair}_data_for_${state}.tab
-		grep -iv NA _tmpStatePairQuartile | awk '{print $1,$5; print $6,$10}' | grep ${state} | sort -k 1,1 -k 2,2n | uniq | awk -v q=${quartile} '{printf("%s\t%s\n",q,$2)}' >> ${outFileAvgLog2ratioPerState}
+		cat _tmpStatePairQuartile | awk '{if($5!="NA"){print $1,$5}; if($10!="NA"){print $6,$10}}' | grep ${state} | sort -k 1,1 -k 2,2n | uniq | awk -v q=${quartile} '{printf("%s\t%s\n",q,$2)}' >> ${outFileAvgLog2ratioPerState}
 		continue
 	    done	    
 	    
 	done
 
-	#file1=avgScores_trans1Dinterval_all_domains_vs_all_domains_${statePair}_data_new.tab
-	#file2=avgScores_trans1Dinterval_all_domains_vs_all_domains_${statePair}_data.tab
-	#echo "Comparing ${file1} with ${file2}" 
-	#diff <( sort -k 2,2n ${file1} ) <( sort -k 2,2n ${file2} )
-	#head ${file1} ${file2}
-	#echo
-	
-	#file1=1Ddistances_trans1Dinterval_all_domains_vs_all_domains_${statePair}_data_new.tab
-	#file2=1Ddistances_trans1Dinterval_all_domains_vs_all_domains_${statePair}_data.tab
-	#echo "Comparing ${file1} with ${file2}" 
-	#diff <( sort -k 2,2n ${file1} ) <( sort -k 2,2n ${file2} | grep NOnub | sed "s/NOnub//g" )
-	#head ${file1} ${file2}	
-	#echo
-
-	#file1=avgLog2ratio_trans1Dinterval_all_domains_vs_all_domains_${statePair}_data_new.tab
-	#file2=avgLog2ratio_trans1Dinterval_all_domains_vs_all_domains_${statePair}_data.tab
-	#awk '{h[$1]++}END{for(i in h){print i,h[i]}}' ${file1} | sort -k 1,1
-	#awk '{h[$1]++}END{for(i in h){print i,h[i]}}' ${file2} | grep NOnub | sed "s/NOnub//g" | sort -k 1,1
-	#wc -l ${file1} <( grep NOnub ${file2} )
-	#echo "Comparing ${file1} with ${file2}" 
-	#diff <( sort -k 2,2n ${file1} ) <( sort -k 2,2n ${file2} | grep NOnub | sed "s/NOnub//g" ) | wc -l
-	#exit
-	#head ${file1} ${file2}	
-	#echo	
-	#exit
     done
 done
 rm -fvr _tmpStatePair _tmpStatePairQuartile
