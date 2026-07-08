@@ -3,5 +3,4 @@
 *.bam
 *.bw
 *.bigWig
-Figures
 synchronize_data.sh
