@@ -1,19 +1,10 @@
+
 ##### 2023 DEseq2 analysis ###
 library(tidyverse)
 library(data.table)
 library("DESeq2")
 library("EnhancedVolcano")
 args = commandArgs(trailingOnly=TRUE)
-#options(scipen = 999)
-
-#toMatch <- c("WT","NO","Gene")
-#toMatch <- c("WT","SUMO","Gene")
-
-#toMatch <- c("SUMOnub_Rep2","SUMOnub_Rep3","NOnub_Rep1","NOnub_Rep2","Gene")
-#toMatch <- c("SUMO","NO","Gene")
-
-#toMatch <- c("2801_Rep1","2801_Rep3","3601_Rep1","3601_Rep2","Gene")
-#toMatch <- c("2801","3601","Gene")
 
 if(is.na(args[1]) && is.na(args[2]))
 {
@@ -42,23 +33,17 @@ print(paste0("You provided an p-adj cutoff of ",pCutoff," and a Fold-Change cuto
 print(paste0("has been converted to a Log2-Fold-Change cutoff of ",Log2FCcutoff),quote=F,row.names=F)
 
 ### File with the counts from subread
-countFile = "countReadPairs_using_subread.tab"
+countFile = "countReadPairs_using_subread_flybase.tab"
+#countFile = "countReadPairs_using_subread.tab"
+#countFile = "countReadPairs_using_subread_Original.tab"
 if(!file.exists(countFile))
 {
     countFile = "countReads_using_subread.tab"
 }
 print(paste0("Using counts in ",countFile))
 countData <- read.table(countFile, header = TRUE)
-#countData <- countData[,grep(paste(toMatch,collapse="|"),names(countData))]
-#print(head(countData))
-#print(nrow(countData))
-#row_indices <- apply(countData, 1, function(row) any(as.numeric(row) > 10))
-#print(length(row_indices))
-#print(row_indices)
-#countData <- countData[row_indices,]
-#countData <- countData[-grep("NA",),]
-#print(head(countData))
-#quit()
+
+row_indices <- apply(countData, 1, function(row) any(as.numeric(row) > 10))
 
 ### Data with the conditions of untreated and treated conditions
 samplesFile = "samplesFiles.txt"
@@ -81,6 +66,22 @@ keep <- which(rowSums(counts(dds)) >= 10)
 dds <- dds[keep,]
 head(counts(dds))
 
+print(paste0("Doing PCA clustering with vst transformed counts"))
+vsd <- vst(dds, blind=FALSE)
+print(vsd)
+#quit()
+PCAdata <- plotPCA(vsd,returnData=TRUE,intgroup=c("condition", "type", "id"))
+
+pdf("PCAplot.pdf")
+percentVar <- round(100 * attr(PCAdata, "percentVar"))
+ggplot(PCAdata, aes(PC1, PC2, color=condition, shape=type)) +
+  geom_point(size=3) +
+  geom_text(aes(label = id), size=2) +
+  xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+  ylab(paste0("PC2: ",percentVar[2],"% variance")) + 
+  coord_fixed()
+#print(PCAdata)
+dev.off()
 #quit()
 
 print(paste0("Running the DEseq2 analysis"))
@@ -89,33 +90,33 @@ res <- results(resDEseq2, tidy=TRUE)
 print(head(res))
 summary(res)
 
-	print(paste0("Doing PCA clustering with vst transformed counts"))
-	vsd <- vst(dds, blind=FALSE)
-	print(vsd)
-	PCAdata <- plotPCA(vsd,returnData=TRUE,intgroup=c("condition", "type", "id"))
-
-	percentVar <- round(100 * attr(PCAdata, "percentVar"))
-	p <- ggplot(PCAdata, aes(PC1, PC2, color=condition, shape=type)) +
-	  geom_point(size=3) +
-          geom_text(aes(label = id), size=2) +
-	  xlab(paste0("PC1: ",percentVar[1],"% variance")) +
-	  ylab(paste0("PC2: ",percentVar[2],"% variance")) + 
-	  coord_fixed()
-	pdf(paste0("PCAplot_allSample.pdf"))	  
-	print(p)
-	dev.off()
-	quit()
+# Write normalized counts
+dds <- estimateSizeFactors(dds)
+normalized_counts <- counts(dds, normalized=TRUE)
+normCountsFile <- paste0("normalizedCounts_using_DEseq2.tsv")
+write.table(normalized_counts, file=normCountsFile, sep="\t", row.names=T, quote=FALSE)
 
 # Sets of genes of interest
-#PcGgenes <- read.table("PcG_targets.csv", header=F)
-#PcGgenes <- unlist(PcGgenes$V1)
+PcGgenes <- read.table("PcG_targets_Parreno2024_noRNA_noCG_noCR_selected.txt", header=F)
+colnames(PcGgenes) <- c("flybase","genes")
+genes_of_interest <- PcGgenes
+#PcGgenes <- unlist(PcGgenes$genes)
+#genes_of_interest <- data.frame(gene = PcGgenes)
+
+PcGgenesAll <- read.table("PcG_targets_Parreno2024_noRNA_noCG_noCR.txt", header=F)
+colnames(PcGgenesAll) <- c("flybase","genes")
+genes_of_interest_all <- PcGgenesAll
+#PcGgenesAll <- unlist(PcGgenesAll$genes)
+#genes_of_interest_all <- data.frame(gene = PcGgenesAll)
+
 #interestGenes <- list(Hox          = c("Antp","Ubx","lab","Scr","Abd-B","abd-A","pb","Dfd"),
-#                      Wing_related = c("cv-2","cv","fuss","cat","notch","ci","spalt","cv-d"),
-#                      PcGgenes     = PcGgenes,
-#                      none         = c("")
+#                      #Wing_related = c("cv-2","cv","fuss","cat","notch","ci","spalt","cv-d"),
+#                      PcGgenes     = PcGgenes
+#                      #none         = c("")
 #                      )
-#print(interestGenes)
-#print(interestGenes$Hox)
+interestGenes <- list(PcGgenes     = PcGgenes)		      
+print(interestGenes)
+print(interestGenes$PcGgenes)
 #print(intersect(interestGenes$Hox,interestGenes$PcGgenes))
 #quit()
 
@@ -124,41 +125,20 @@ summary(res)
 #    interestGenes <- list(NA = c())
 #}
 
-#for(set in names(interestGenes))
-#{
-
-set = NA
-
-for(mutant1 in conditions)
+for(set in names(interestGenes))
 {
-    for(mutant2 in conditions)
+
+#set = NA
+
+#for(mutant1 in conditions)
+for(mutant1 in c("WD_NOnub"))
+{
+    #for(mutant2 in conditions)
+    for(mutant2 in c("WD_SUMOnub"))    
     {
         if(mutant1 == mutant2){next}
 
-	# Write normalized counts
-	dds <- estimateSizeFactors(dds)
-	normalized_counts <- counts(dds, normalized=TRUE)
-	normCountsFile <- paste0("normalizedCounts_using_DEseq2_",mutant2,"_vs_",mutant1,".tsv")
-	write.table(normalized_counts, file=normCountsFile, sep="\t", row.names=T, quote=FALSE)
-
         print(paste0("Doing the DEseq2 analysis of ",mutant2," vs ",mutant1))
-
-	print(paste0("Doing PCA clustering with vst transformed counts"))
-	vsd <- vst(dds, blind=FALSE)
-	print(vsd)
-	PCAdata <- plotPCA(vsd,returnData=TRUE,intgroup=c("condition", "type", "id"))
-
-	percentVar <- round(100 * attr(PCAdata, "percentVar"))
-	p <- ggplot(PCAdata, aes(PC1, PC2, color=condition, shape=type)) +
-	  geom_point(size=3) +
-          geom_text(aes(label = id), size=2) +
-	  xlab(paste0("PC1: ",percentVar[1],"% variance")) +
-	  ylab(paste0("PC2: ",percentVar[2],"% variance")) + 
-	  coord_fixed()
-	pdf(paste0("PCAplot_",mutant2,"_vs_",mutant1,".pdf"))	  
-	print(p)
-	dev.off()
-	quit()
 
 	res_comparison <- results(resDEseq2, contrast = c("condition", mutant2, mutant1))
         res_comparison <- res_comparison[order(res_comparison$padj),]
@@ -173,7 +153,7 @@ for(mutant1 in conditions)
 	   padjust          = res_comparison$padj
 	   )
 
-    	outFile <- paste0("MAPlot_",mutant2,"_vs_",mutant1,"_genesOfInterest_",set,".pdf")
+    	outFile <- paste0("MAPlot_",mutant2,"_vs_",mutant1,"_genesOfInterest_",set,"_new.pdf")
 	if(!file.exists(outFile))
         {
 	   #	    MAplot <- plotMA(res_comparison)
@@ -191,21 +171,21 @@ for(mutant1 in conditions)
 	resNorm <- lfcShrink(resDEseq2, coef=2, type="normal")
 	resAsh  <- lfcShrink(resDEseq2, coef=2, type="ashr")
 	resLFC  <- lfcShrink(resDEseq2, coef=2, type="apeglm")
-	outFile <- paste0("MAPlot_apeglm_",mutant2,"_vs_",mutant1,"_genesOfInterest_",set,".pdf")
+	outFile <- paste0("MAPlot_apeglm_",mutant2,"_vs_",mutant1,"_genesOfInterest_",set,"_new.pdf")
         if(!file.exists(outFile))
         {
             pdf(outFile)
             plotMA(resLFC)
             dev.off()
         }
-	outFile <- paste0("MAPlot_Normal_",mutant2,"_vs_",mutant1,"_genesOfInterest_",set,".pdf")
+	outFile <- paste0("MAPlot_Normal_",mutant2,"_vs_",mutant1,"_genesOfInterest_",set,"_new.pdf")
         if(!file.exists(outFile))
         {
             pdf(outFile)
             plotMA(resNorm)
             dev.off()
         }
-	outFile <- paste0("MAPlot_ashr_",mutant2,"_vs_",mutant1,"_genesOfInterest_",set,".pdf")
+	outFile <- paste0("MAPlot_ashr_",mutant2,"_vs_",mutant1,"_genesOfInterest_",set,"_new.pdf")
         if(!file.exists(outFile))
         {
             pdf(outFile)
@@ -213,30 +193,236 @@ for(mutant1 in conditions)
             dev.off()
         }	
 
-    	outfile <- paste0("vulcanoPlot_",mutant2,"_vs_",mutant1,"_genesOfInterest_",set,".pdf")
+    	outfile <- paste0("vulcanoPlot_",mutant2,"_vs_",mutant1,"_genesOfInterest_",set,"_new.pdf")
+	print(head(res_comparison))
+	#quit()
+	
 	if(!file.exists(outfile))
 	{
-            vulcanoPlot <- EnhancedVolcano(res_comparison,
-               lab = NA, #rownames(res_comparison),
-  	       x = 'log2FoldChange',
-               y = 'padj',
-               title = paste0(mutant2," vs ",mutant1),
-	       pointSize = 1.5,
-	       labSize = 6.0,
-	       #	       selectLab = interestGenes[[set]],
-	       labCol = 'black',
-	       labFace = 'italic',
-               pCutoff = pCutoff,
-               FCcutoff = Log2FCcutoff,
-	       colAlpha = 0.40,
- 	       drawConnectors = TRUE,
-	       widthConnectors = 0.2
-		   )
-	    	pdf(paste0("vulcanoPlot_",mutant2,"_vs_",mutant1,"_",set,".pdf"))
-            	print(vulcanoPlot)
-            	dev.off()
+
+	    df <- res_comparison
+	    # Convert DESeq2 results to data frame
+	    df <- as.data.frame(df)
+
+	    # Preserve gene names (rownames → column)
+	    df$gene <- rownames(df)
+	    
+	    df$category <- "NS"
+	    df$category[df$log2FoldChange >  FCcutoff & df$padj < pCutoff] <- "Up"
+	    df$category[df$log2FoldChange < -FCcutoff & df$padj < pCutoff] <- "Down"
+
+	    #df$category[df$gene %in% genes_of_interest_all$gene & df$category == "NS"] <- "PcG_targets_NS"
+	    #df$category[df$gene %in% genes_of_interest_all$gene & df$category == "Up"] <- "PcG_targets_Up"
+	    #df$category[df$gene %in% genes_of_interest_all$gene & df$category == "Down"] <- "PcG_targets_Down"
+	    df$category[df$gene %in% genes_of_interest_all$flybase & df$category == "NS"] <- "PcG_targets_NS"
+	    df$category[df$gene %in% genes_of_interest_all$flybase & df$category == "Up"] <- "PcG_targets_Up"
+	    df$category[df$gene %in% genes_of_interest_all$flybase & df$category == "Down"] <- "PcG_targets_Down"	    	    
+	    
+	    print(head(df))
+	    #quit()
+
+	    # Clean data
+	    df <- df %>%
+	      filter(!is.na(log2FoldChange), !is.na(padj), padj > 0) %>%
+	        mutate(
+		    neg_log10_padj = -log10(padj),
+		    #category = case_when(
+		    #log2FoldChange > Log2FCcutoff  & padj < pCutoff ~ "Up",
+		    #log2FoldChange < -Log2FCcutoff & padj < pCutoff ~ "Down",
+		    #TRUE ~ "NS"
+		#),
+		#highlight = ifelse(gene %in% genes_of_interest_all$gene, "Highlighted", "Other")
+	      )
+
+	    # Subset for labeling
+	    highlight_df <- df[df$gene %in% genes_of_interest$flybase,]
+	    highlight_df <- highlight_df[order(highlight_df$gene),]
+	    genes_of_interest <- genes_of_interest[genes_of_interest$flybase %in% highlight_df$gene,]
+	    genes_of_interest <- genes_of_interest[order(genes_of_interest$flybase),]
+	    print(nrow(highlight_df))
+	    print(nrow(genes_of_interest))
+	    #print(highlight_df[genes_of_interest$flybase],)
+	    highlight_df$geneName <- genes_of_interest$gene[match(genes_of_interest$flybase,highlight_df$gene)]
+	    print(highlight_df)
+	    #quit()
+
+	    print(unique(df$category))
+	    #df$category <- factor(df$category, levels = c("Up", "Down", "NS", "PcG_targets_Up", "PcG_targets_Down", "PcG_targets_NS"))
+	    #df$category <- factor(df$category, levels = c("Up", "PcG_targets_Up", "Down", "PcG_targets_Down", "NS", "PcG_targets_NS"))
+	    df$category <- factor(df$category, levels = c("Down", "PcG_targets_Down", "NS", "PcG_targets_NS", "Up", "PcG_targets_Up"))	    	    
+	    counts <- df %>%
+	               group_by(category) %>%
+		       summarize(n = n(), category=unique(category))
+	    print(counts)
+	    #quit()
+
+	    # Plot
+	    vulcanoPlot <- ggplot(df, aes(x = log2FoldChange, y = neg_log10_padj)) +
+	      geom_point(aes(color = category, fill = category), size = 1.5, alpha = 0.6, shape = 21, stroke = 0.75) +
+
+	      #geom_point(
+		#data = df[df$category == "Up",],
+	        #color = "red",
+		#fill = "red",
+		#shape = 21,
+		#size = 1.5,
+		#stroke = 0.75,
+		#alpha = 0.6
+	      #) +
+	      #geom_point(
+		#data = df[df$category == "Down",],
+	        #color = "blue",
+		#fill = "blue",
+		#shape = 21,
+		#size = 1.5,
+		#stroke = 0.75,
+		#alpha = 0.6
+	      #) +
+	      #geom_point(
+		#data = df[df$category == "NS",],
+	        #color = "gray",
+		#fill = "gray",
+		#shape = 21,
+		#size = 1.5,
+		#alpha = 0.6,
+		#stroke = 0.75
+	      #) +
+	      geom_point(
+		data = df[df$category == "PcG_targets_Up",],
+	        color = "red",
+		fill = "yellow",
+		shape = 21,
+		size = 1.5,
+		alpha = 0.6,
+		stroke = 0.75
+	      ) +
+	      geom_point(
+		data = df[df$category == "PcG_targets_Down",],
+	        color = "blue",
+		fill = "yellow",
+		shape = 21,
+		size = 1.5,
+		alpha = 0.6,
+		stroke = 0.75
+	      ) +
+	      geom_point(
+		data = df[df$category == "PcG_targets_NS",],
+	        color = "gray",
+		fill = "yellow",
+		shape = 21,
+		size = 1.5,
+                alpha = 0.6,
+		stroke = 0.75
+	      ) +	      
+
+	      # Threshold lines
+	      geom_vline(xintercept = c(FCcutoff), linetype = "dashed", color = "black", linewidth = 0.4) +
+	      geom_vline(xintercept = c(-FCcutoff), linetype = "dashed", color = "black", linewidth = 0.4) +	      
+	      geom_hline(yintercept = -log10(pCutoff), linetype = "dashed", color = "black", linewidth = 0.4) +
+
+	      # Labels for top genes
+	      geom_label_repel(
+	          data = highlight_df,
+		  aes(label = geneName),
+		  size = 2.5,
+		  max.overlaps = Inf,
+		  box.padding = 1.2,
+		  segment.size = 0.3,
+		  point.padding = .10,
+		  fill = "white"
+	     ) +
+  
+	     # Colors
+	     scale_fill_manual(values = c(
+	     			       Up = "red",
+				       Down = "blue",
+				       NS = "grey",
+	     			       PcG_targets_Up = "yellow",
+				       PcG_targets_Down = "yellow",
+				       PcG_targets_NS = "yellow"				       
+				       ), guide = "none") +
+
+	     # Colors
+	     scale_color_manual(values = c(
+	     			       Up = "red",
+				       Down = "blue",
+				       NS = "grey",
+	     			       PcG_targets_Up = "red",
+				       PcG_targets_Down = "blue",
+				       PcG_targets_NS = "gray"				       
+				       ),
+	      			labels = c(
+              Up   = paste0("All Up (n=", counts$n[counts$category=="Up"]+counts$n[counts$category=="PcG_targets_Up"], ")"),
+              Down = paste0("All Down (n=", counts$n[counts$category=="Down"]+counts$n[counts$category=="PcG_targets_Down"], ")"),
+              NS   = paste0("All NS (n=", counts$n[counts$category=="NS"]+counts$n[counts$category=="PcG_targets_NS"], ")"),
+              PcG_targets_Up = paste0("PcG Up (n=", counts$n[counts$category=="PcG_targets_Up"], ")"),
+              PcG_targets_Down = paste0("PcG Down (n=", counts$n[counts$category=="PcG_targets_Down"], ")"),
+              PcG_targets_NS = paste0("PcG NS (n=", counts$n[counts$category=="PcG_targets_NS"], ")")
+              )) +   
+
+	      guides(
+	        color = guide_legend(
+		    override.aes = list(
+		    shape = 21,
+		    fill = c("blue","yellow","gray","yellow","red","yellow"),
+		    stroke = 0.75
+	            )
+		    )
+	       ) +
+	     xlim(min(df$log2FoldChange), max(df$log2FoldChange)) + ylim(-25, max(df$neg_log10_padj)) +
+				
+	     # Labels
+	     labs(
+	         x = expression(log[2]~"Fold Change"),
+		 y = expression(-log[10]~"adj. p-value"),
+		 color = NULL
+		 ) +
+  
+	     # Theme (Nature-style minimalism)
+	     theme_classic(base_size = 10) +
+	       theme(
+	            legend.position = 'top',
+		    legend.key = element_blank(),
+		    legend.key.size = unit(0.5, 'cm'),
+		    legend.text = element_text(
+		    		  size = 14),
+		    title = element_text(
+		                 size = 14),
+		    axis.text = element_text(size = 14),
+		    axis.title = element_text(size = 18),
+		    aspect.ratio = 0.5
+	     )
+
+
+	    #vulcanoPlot <- EnhancedVolcano(res_comparison,
+            #   lab = rownames(res_comparison),
+  	    #   x = 'log2FoldChange',
+            #   y = 'padj',
+	    #   #col = c("Up" = "red", "Down" = "blue", "NS" = "gray"),
+	    #   col = c("NS" = "gray", "Down" = "blue", "Up" = "red"),
+	    #   #col = c("gray","gray","gray","red"),	       
+	    #   #selectLab = c("Up", "Down"),
+	    #   #legendLab = c("Up","Down","NS"),	       
+            #   title = "", #paste0(mutant2," vs ",mutant1),
+	    #   pointSize = 1.5,
+	    #   labSize = 3.0,
+	    #   selectLab = interestGenes[[set]],
+	    #   labCol = 'black',
+	    #   labFace = 'italic',
+            #   pCutoff = pCutoff,
+            #   FCcutoff = Log2FCcutoff,
+	    #   colAlpha = 0.20,
+ 	    #   drawConnectors = TRUE,
+	    #   widthConnectors = 0.2,
+	    #   xlim = c(-10,15),
+	    #   legendLabSize = 14,
+	    #   legendIconSize = 4.0
+	    #	   ) + coord_flip()
+	    pdf(paste0("vulcanoPlot_",mutant2,"_vs_",mutant1,"_",set,"_new.pdf"), width = 8)
+            print(vulcanoPlot)
+            dev.off()
         }   
-        write.table(final, file=paste0("DEseq2_results_",mutant2,"_vs_",mutant1,".tsv"), sep="\t", row.names=FALSE, quote=FALSE)
+        write.table(final, file=paste0("DEseq2_results_",mutant2,"_vs_",mutant1,"_new.tsv"), sep="\t", row.names=FALSE, quote=FALSE)
 
         final_padj_FC <- final[which(final$padjust < pCutoff & abs(final$log2Ratio) > Log2FCcutoff), ]
 
@@ -247,10 +433,10 @@ for(mutant1 in conditions)
         final_padj_FC_D <- final_padj_FC_D[order(final_padj_FC_D$log2Ratio, decreasing = F),]
         print(head(final_padj_FC_U))
         print(head(final_padj_FC_D))	
-        write.table(final_padj_FC_U, file=paste0("Up_DEgenes_",mutant2,"_vs_",mutant1,"_padj",pCutoff,"_FC",FCcutoff,".tsv")  , sep="\t", row.names=FALSE, quote=FALSE)
-        write.table(final_padj_FC_D, file=paste0("Down_DEgenes_",mutant2,"_vs_",mutant1,"_padj",pCutoff,"_FC",FCcutoff,".tsv"), sep="\t", row.names=FALSE, quote=FALSE)
+        write.table(final_padj_FC_U, file=paste0("Up_DEgenes_",mutant2,"_vs_",mutant1,"_padj",pCutoff,"_FC",FCcutoff,"_new.tsv")  , sep="\t", row.names=FALSE, quote=FALSE)
+        write.table(final_padj_FC_D, file=paste0("Down_DEgenes_",mutant2,"_vs_",mutant1,"_padj",pCutoff,"_FC",FCcutoff,"_new.tsv"), sep="\t", row.names=FALSE, quote=FALSE)
 
     }     
 }
-#}
+}
 quit()
