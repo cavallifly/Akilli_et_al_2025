@@ -1,4 +1,4 @@
-This repository contains the scripts to perform the data analysis in Akilli at al., 2025. Links to the raw and processed data files will be provided once they will be publicly available via Gene expression Omnibus (GEO).
+This repository contains the scripts to perform the data analysis in Akilli at al., 2025. Links to the raw and processed data files for RNA-seq, CUT/&RUN, and Hi-C assays will be provided once they will be publicly available via Gene expression Omnibus ([GEO](https://www.ncbi.nlm.nih.gov/geo/)).
 
 Note:
 For the Hi-C data analysis and for the computation of the Hi-C scores, we refer to the scripts in [Denaud_et_al_GenomeBiol_2025](https://github.com/cavallifly/Denaud_et_al_GenomeBiol_2025/tree/main/HiC_analysis).
