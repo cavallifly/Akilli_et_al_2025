@@ -45,7 +45,7 @@ vlite::bwScreenshot(
   #sel.gene.symbols = c("dac","inv","Antp","Ubx","upd1", "upd2", "upd3", "zfh1", "lab", "Abd-B", "en", "Dronc", "h"),
   sel.gene.symbols = c("dac","inv","Antp","Ubx","upd1", "upd2", "upd3", "zfh1", "lab", "Abd-B", "en", "Dronc", "h"),  
   gene.height = 3,
-  bw.max = c(460, 460, 500, 210, 180, 180, 740),  
+  bw.max = c(370, 370, 500, 210, 180, 180, 370),  
   cex.gene.symbol = .6 #,
 #  col.gene.ps = "grey60" ,
 #  col.gene.ns = "grey60" 
